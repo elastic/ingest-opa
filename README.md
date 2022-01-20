@@ -7,7 +7,7 @@ cd src/main/java/org/elasticsearch/plugin/ingest/opa
 go build -o awesome.so -buildmode=c-shared awesome.go
 mkdir -p /Users/eyal/Library/Frameworks/./awesome.so.framework/./
 cp ~/workspace/javaopa/ingest-opa/src/main/java/org/elasticsearch/plugin/ingest/opa/awesome.so /Users/eyal/Library/Frameworks/./awesome.so.framework/./
-cp ~/workspace/javaopa/ingest-opa/src/main/java/org/elasticsearch/plugin/ingest/opa/awesome.h /Users/eyal/Library/Frameworks/./awesome.so.framework/./
+# cp ~/workspace/javaopa/ingest-opa/src/main/java/org/elasticsearch/plugin/ingest/opa/awesome.h /Users/eyal/Library/Frameworks/./awesome.so.framework/./
 
 cd ~/workspace/javaopa/ingest-opa
 gradle clean check
@@ -27,6 +27,8 @@ After the relevant version of elasticsearch has beed downloaded and started stop
 cd .es/7.16.3
 bin/elasticsearch-plugin install file:///Users/eyal/workspace/javaopa/ingest-opa/build/distributions/ingest-opa-0.0.1-SNAPSHOT.zip
 # approve with y when asked
+# if already installed run:
+bin/elasticsearch-plugin remove ingest-opa
 # note to self: edit config files?
 ```
 
@@ -39,6 +41,7 @@ grant {
   permission java.io.FilePermission "/Library/Frameworks/./awesome.so.framework/./awesome.so", "read";
   permission java.io.FilePermission "/System/Library/Frameworks/./awesome.so.framework/./awesome.so", "read";
   permission java.lang.reflect.ReflectPermission "OpaProcessor.org.elasticsearch.plugin.ingest.opa";
+  permission java.lang.RuntimePermission "accessDeclaredMembers";
 };
 ```
 
@@ -55,7 +58,7 @@ I created a new profile with elastic-stack `eyal2`, reconfigured the file `profi
 elastic-package stack up -p eyal2 -d --version=7.16.3-SNAPSHOT -s kibana
 ```
 
-Now on the developer concole of kibana run these by order:
+Now on the developer console of kibana run these by order:
 
 ```
 GET _nodes/ingest?filter_path=nodes.*.ingest.processors
@@ -96,6 +99,8 @@ https://github.com/java-native-access/jna/blob/master/www/GettingStarted.md
 
 https://stackoverflow.com/questions/49986729/how-can-i-call-a-go-function-from-java-using-the-java-native-interface
 
+https://stackoverflow.com/questions/49547293/jna-to-go-dll-how-do-i-get-string-returned-from-go-func
+
 https://github.com/jbuberel/buildmodeshared
 
 #### Elasticsearch Plugins
@@ -132,6 +137,8 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/executable-jna-t
 https://github.com/opendistro-for-elasticsearch/k-NN/blob/c2ac595ce5e8999878de05251e14dae6f59de9fb/jni/src/com_amazon_opendistroforelasticsearch_knn_index_v2011_KNNIndex.cpp - CPP example (old?)
 
 https://discuss.elastic.co/t/questions-about-non-java-c-elasticsearch-native-clients/50719
+
+https://github.com/elastic/elasticsearch/issues/62143
 
 #### OPA API
 

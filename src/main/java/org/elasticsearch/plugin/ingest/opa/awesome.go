@@ -3,11 +3,11 @@ package main
 import "C"
 
 import (
+	"context"
 	"fmt"
 	"math"
 	"sort"
 	"sync"
-	"context"
 
 	"bytes"
 	"encoding/json"
@@ -51,13 +51,20 @@ func LogPtr(msg *string) int {
 	return Log(*msg);
 }
 
+//export decrypt
+func decrypt(encString string, secretKeyring string, passphrase string) *C.char {
+    //... your code here
+    var str string = "returning string"
+    return C.CString(str)
+}
+
 //export Eval
-func Eval() int {
+func Eval(in string) *C.char {
 
 	ctx := context.Background()
 
 	// Raw input data that will be used in evaluation.
-	raw := `{"users": [{"id": "bob"}, {"id": "alice"}]}`
+	raw := fmt.Sprintf(`{"user": "%s"}`, in)
 	d := json.NewDecoder(bytes.NewBufferString(raw))
 
 	// Numeric values must be represented using json.Number.
@@ -71,20 +78,28 @@ func Eval() int {
 
 	// Create a simple query over the input.
 	rego := rego.New(
-		rego.Query("input.users[idx].id = user_id"),
-		rego.Input(input))
+		rego.Query("data.example.x"),
+		rego.Input(input),
+		rego.Module("example.rego",
+			`package example
+
+default x = false
+	
+x = input.user == "alice"
+`,
+		))
 
 	//Run evaluation.
 	rs, err := rego.Eval(ctx)
 
 	if err != nil {
 		// Handle error.
+		panic(err)
 	}
 
 	// Inspect results.
-	fmt.Println("len:", len(rs))
-	fmt.Println("bindings.idx:", rs[1].Bindings["idx"])
-	return 3
+    var str string = fmt.Sprintf("%v", rs[0].Expressions[0].Value)
+    return C.CString(str)
 
 }
 

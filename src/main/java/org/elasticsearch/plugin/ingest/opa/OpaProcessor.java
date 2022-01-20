@@ -49,10 +49,12 @@ public class OpaProcessor extends AbstractProcessor {
         // TODO implement me!
 
         Client.Awesome awesome = (Client.Awesome) Native.loadLibrary("./awesome.so", Client.Awesome.class);
-        long res = awesome.Add(12, 99);
+        Client.Awesome.GoString.ByValue str = new Client.Awesome.GoString.ByValue();
+        str.p = content;
+        str.n = str.p.length();
+        String res = awesome.Eval(str);
         // TODO implement me!
-        ingestDocument.setFieldValue(targetField, content);
-        ingestDocument.setFieldValue("eyalos", res);
+        ingestDocument.setFieldValue(targetField, res);
         return ingestDocument;
     }
 

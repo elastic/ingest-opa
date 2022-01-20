@@ -34,7 +34,7 @@ public class Client {
         public double Cosine(double val);
         public void Sort(GoSlice.ByValue vals);
         public long Log(GoString.ByValue str);
-        public long Eval();
+        public String Eval(GoString.ByValue in);
     }
  
 //    static public void main(String argv[]) {
