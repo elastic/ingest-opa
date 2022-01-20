@@ -1,0 +1,21 @@
+GET _nodes/ingest?filter_path=nodes.*.ingest.processors
+
+PUT _ingest/pipeline/opa-pipeline
+{
+  "description": "A pipeline to do whatever",
+  "processors": [
+    {
+      "opa" : {
+        "field" : "resource",
+        "target_field" : "finding"
+      }
+    }
+  ]
+}
+
+PUT /my-index/my-type/1?pipeline=opa-pipeline
+{
+  "resource" : "Some content"
+}
+
+GET /my-index/my-type/1
